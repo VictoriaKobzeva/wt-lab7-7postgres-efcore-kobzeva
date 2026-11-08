@@ -1,0 +1,24 @@
+## .NET build artifacts
+bin/
+obj/
+out/
+
+## IDE / OS files
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+.DS_Store
+
+## Local secrets
+# Файл содержит локальный пароль PostgreSQL и не должен попадать в Git.
+appsettings.Development.json
+
+## Local database files
+*.db
+*.db-shm
+*.db-wal
+
+## Logs
+*.log
