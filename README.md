@@ -5,6 +5,10 @@
 ASP.NET Core Minimal API для учёта недвижимости. Данные хранятся в PostgreSQL,
 доступ к ним выполняется через Entity Framework Core (подход Code First).
 
+- **Публичный URL:** <https://wt-lab7-7postgres-efcore-kobzeva.onrender.com>
+- **GitHub:** <https://github.com/VictoriaKobzeva/wt-lab7-7postgres-efcore-kobzeva>
+- **Отчёт:** [REPORT.md](REPORT.md) · [PDF](wt-lab7-kobzeva.pdf)
+
 ## Предметная область
 
 Недвижимость (объекты аренды/продажи). Основная сущность — `Property`:
@@ -118,6 +122,19 @@ dotnet ef migrations script
 История применённых миграций хранится в таблице `__EFMigrationsHistory`.
 `EnsureCreated()` не используется, так как он обходит систему миграций.
 
+В проекте пять миграций:
+
+```
+20261103072107_InitialCreate
+20261103072113_AddCreatedAt
+20261103072125_SeedProperties
+20261103072139_AddDescription
+20261108192553_AddFloor
+```
+
+Последняя миграция добавлена после первого деплоя на Render и применена
+автоматически при повторном Deploy.
+
 ## Docker
 
 ```bash
@@ -152,5 +169,7 @@ docker run -p 10000:10000 \
 
 ## Ссылки
 
-- GitHub-репозиторий: `<URL репозитория>`
-- Публичный URL Render: `<https://имя-сервиса>.onrender.com>`
+- GitHub-репозиторий: <https://github.com/VictoriaKobzeva/wt-lab7-7postgres-efcore-kobzeva>
+- Публичный URL Render: <https://wt-lab7-7postgres-efcore-kobzeva.onrender.com>
+- Render PostgreSQL: `wt-lab7-db-kobzeva` (Frankfurt, free)
+- Render Web Service: `wt-lab7-7postgres-efcore-kobzeva` (Docker, free)

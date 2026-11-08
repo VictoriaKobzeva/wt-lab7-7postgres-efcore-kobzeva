@@ -22,3 +22,6 @@ appsettings.Development.json
 
 ## Logs
 *.log
+
+## Report build fonts (not committed)
+docs/fonts/
