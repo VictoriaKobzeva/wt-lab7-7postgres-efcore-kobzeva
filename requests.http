@@ -1,0 +1,62 @@
+@host = http://localhost:10000
+
+### Проверка приложения
+GET {{host}}/
+
+### Информация о приложении
+GET {{host}}/api/info
+
+### Все объекты
+GET {{host}}/api/properties
+
+### Объект по идентификатору
+GET {{host}}/api/properties/1
+
+### Несуществующий объект (404)
+GET {{host}}/api/properties/999
+
+### Поиск
+GET {{host}}/api/properties/search?search=дом
+
+### Фильтрация по цене (LINQ Where)
+GET {{host}}/api/properties/filter?minPrice=100000&maxPrice=200000
+
+### Сортировка по цене (LINQ OrderBy)
+GET {{host}}/api/properties/sorted?descending=true
+
+### Доступные объекты (LINQ Where + OrderBy)
+GET {{host}}/api/properties/available
+
+### Статистика по типам (LINQ GroupBy)
+GET {{host}}/api/properties/stats
+
+### Создание объекта
+POST {{host}}/api/properties
+Content-Type: application/json
+
+{
+  "address": "ул. Тестовая, 99",
+  "type": "Квартира",
+  "price": 50000,
+  "area": 80,
+  "rooms": 2,
+  "isAvailable": true,
+  "description": "Тестовый объект"
+}
+
+### Изменение объекта
+PUT {{host}}/api/properties/6
+Content-Type: application/json
+
+{
+  "address": "ул. Тестовая, 99",
+  "type": "Квартира",
+  "price": 99999,
+  "area": 80,
+  "rooms": 2,
+  "isAvailable": true,
+  "description": "Цена изменена"
+}
+
+### Удаление объекта
+DELETE {{host}}/api/properties/6
