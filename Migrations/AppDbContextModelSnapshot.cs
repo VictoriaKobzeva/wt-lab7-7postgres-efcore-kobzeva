@@ -44,6 +44,9 @@ namespace wt_lab7_7postgres_efcore_kobzeva.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("Floor")
+                        .HasColumnType("integer");
+
                     b.Property<bool>("IsAvailable")
                         .HasColumnType("boolean");
 
@@ -69,6 +72,7 @@ namespace wt_lab7_7postgres_efcore_kobzeva.Migrations
                             Area = 54.5,
                             CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "",
+                            Floor = 4,
                             IsAvailable = true,
                             Price = 75000m,
                             Rooms = 2,
@@ -81,6 +85,7 @@ namespace wt_lab7_7postgres_efcore_kobzeva.Migrations
                             Area = 78.200000000000003,
                             CreatedAt = new DateTime(2026, 1, 2, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "",
+                            Floor = 7,
                             IsAvailable = true,
                             Price = 120000m,
                             Rooms = 3,
@@ -93,6 +98,7 @@ namespace wt_lab7_7postgres_efcore_kobzeva.Migrations
                             Area = 145.0,
                             CreatedAt = new DateTime(2026, 1, 3, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "",
+                            Floor = 2,
                             IsAvailable = false,
                             Price = 210000m,
                             Rooms = 5,
@@ -105,6 +111,7 @@ namespace wt_lab7_7postgres_efcore_kobzeva.Migrations
                             Area = 96.400000000000006,
                             CreatedAt = new DateTime(2026, 1, 4, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "",
+                            Floor = 2,
                             IsAvailable = true,
                             Price = 98000m,
                             Rooms = 4,
@@ -117,6 +124,7 @@ namespace wt_lab7_7postgres_efcore_kobzeva.Migrations
                             Area = 32.0,
                             CreatedAt = new DateTime(2026, 1, 5, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "",
+                            Floor = 1,
                             IsAvailable = true,
                             Price = 45000m,
                             Rooms = 1,

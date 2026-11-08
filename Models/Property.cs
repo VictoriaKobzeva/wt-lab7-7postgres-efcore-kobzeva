@@ -8,6 +8,7 @@ public class Property
     public decimal Price { get; set; }
     public double Area { get; set; }
     public int Rooms { get; set; }
+    public int Floor { get; set; }
     public bool IsAvailable { get; set; }
     public DateTime CreatedAt { get; set; }
     public string Description { get; set; } = "";

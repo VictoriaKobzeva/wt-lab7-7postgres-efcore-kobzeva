@@ -17,6 +17,7 @@ ASP.NET Core Minimal API для учёта недвижимости. Данны�
 | `Price` | `decimal` | Цена |
 | `Area` | `double` | Площадь, м² |
 | `Rooms` | `int` | Количество комнат |
+| `Floor` | `int` | Этаж |
 | `IsAvailable` | `bool` | Доступность |
 | `CreatedAt` | `DateTime` | Дата добавления |
 | `Description` | `string` | Описание |
@@ -34,6 +35,7 @@ wt-lab7-7postgres-efcore-kobzeva/
 │   ├── 20261103072113_AddCreatedAt.cs
 │   ├── 20261103072125_SeedProperties.cs
 │   ├── 20261103072139_AddDescription.cs
+│   ├── 20261108192553_AddFloor.cs
 │   └── AppDbContextModelSnapshot.cs
 ├── Program.cs
 ├── appsettings.json

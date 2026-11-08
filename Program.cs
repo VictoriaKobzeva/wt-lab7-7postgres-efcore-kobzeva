@@ -168,6 +168,7 @@ app.MapPut("/api/properties/{id:int}", async (int id, Property updatedProperty, 
     property.Price = updatedProperty.Price;
     property.Area = updatedProperty.Area;
     property.Rooms = updatedProperty.Rooms;
+    property.Floor = updatedProperty.Floor;
     property.IsAvailable = updatedProperty.IsAvailable;
     property.Description = updatedProperty.Description;
 

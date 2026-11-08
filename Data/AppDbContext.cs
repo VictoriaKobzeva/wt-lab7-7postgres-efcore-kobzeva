@@ -23,6 +23,7 @@ public class AppDbContext : DbContext
                 Price = 75000,
                 Area = 54.5,
                 Rooms = 2,
+                Floor = 4,
                 IsAvailable = true,
                 CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc)
             },
@@ -34,6 +35,7 @@ public class AppDbContext : DbContext
                 Price = 120000,
                 Area = 78.2,
                 Rooms = 3,
+                Floor = 7,
                 IsAvailable = true,
                 CreatedAt = new DateTime(2026, 1, 2, 0, 0, 0, DateTimeKind.Utc)
             },
@@ -45,6 +47,7 @@ public class AppDbContext : DbContext
                 Price = 210000,
                 Area = 145.0,
                 Rooms = 5,
+                Floor = 2,
                 IsAvailable = false,
                 CreatedAt = new DateTime(2026, 1, 3, 0, 0, 0, DateTimeKind.Utc)
             },
@@ -56,6 +59,7 @@ public class AppDbContext : DbContext
                 Price = 98000,
                 Area = 96.4,
                 Rooms = 4,
+                Floor = 2,
                 IsAvailable = true,
                 CreatedAt = new DateTime(2026, 1, 4, 0, 0, 0, DateTimeKind.Utc)
             },
@@ -67,6 +71,7 @@ public class AppDbContext : DbContext
                 Price = 45000,
                 Area = 32.0,
                 Rooms = 1,
+                Floor = 1,
                 IsAvailable = true,
                 CreatedAt = new DateTime(2026, 1, 5, 0, 0, 0, DateTimeKind.Utc)
             }

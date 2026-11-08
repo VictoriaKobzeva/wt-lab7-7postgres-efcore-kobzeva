@@ -40,6 +40,7 @@ Content-Type: application/json
   "price": 50000,
   "area": 80,
   "rooms": 2,
+  "floor": 4,
   "isAvailable": true,
   "description": "Тестовый объект"
 }
@@ -54,6 +55,7 @@ Content-Type: application/json
   "price": 99999,
   "area": 80,
   "rooms": 2,
+  "floor": 4,
   "isAvailable": true,
   "description": "Цена изменена"
 }
