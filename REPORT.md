@@ -784,66 +784,90 @@ Dockerfile и выполнена публикация на Render. Провер�
 
 ---
 
-## 21. Приложение. Подключение базы Render к pgAdmin 4
+## 21. Приложение. Подключение локальной базы к pgAdmin 4
 
-Для просмотра таблиц и выполнения SQL-запросов к опубликованной базе можно
-использовать pgAdmin 4. Приложение работает с PostgreSQL по обычному протоколу,
-поэтому подключается к Render так же, как к любому другому серверу PostgreSQL.
+Для разработки удобнее подключаться не к Render, а к локальному PostgreSQL.
+В этой работе локальный сервер PostgreSQL 16 запущен через Postgres.app, база
+`wt_lab7` создана, все миграции применены. Render-база при этом остаётся
+опубликованной и используется приложением на хостинге.
 
 ### 21.1. Параметры подключения
 
 | Параметр | Значение |
 |---|---|
-| Host | `dpg-dbocn86c6qcc73d9mvgg-a.frankfurt-postgres.render.com` |
+| Host | `localhost` |
 | Port | `5432` |
-| Maintenance database | `wt_lab7_d2i1` |
-| Username | `wt_lab7_d2i1_user` |
-| Password | из Render → база → **Connect** → **External Database URL** |
-| SSL mode | `Require` |
+| Maintenance database | `wt_lab7` |
+| Username | `postgres` |
+| Password | пароль, заданный при установке PostgreSQL |
+| SSL mode | `Prefer` |
 
-Пароль не хранится в Git-репозитории и не приводится в отчёте. Его нужно
-скопировать из Render в момент подключения.
+Пароль локального пользователя не хранится в Git-репозитории: он находится
+в `appsettings.Development.json`, который добавлен в `.gitignore`.
 
-### 21.2. Разрешить внешний IP в Render
+### 21.2. Запуск локального PostgreSQL
 
-По умолчанию Render закрывает внешние подключения к бесплатной PostgreSQL.
-В текущей настройке базы правило доступа пустое, поэтому прямое подключение
-из pgAdmin 4 без дополнительного шага завершится ошибкой тайм-аута.
+Если установлен Postgres.app:
 
-1. Открыть базу `wt-lab7-db-kobzeva` в Render Dashboard.
-2. Перейти в раздел **Networking** → **PostgreSQL Inbound IP Rules**.
-3. Нажать **Add source**.
-4. Указать свой публичный IP в формате CIDR, например `31.24.90.216/32`.
-   Узнать IP можно на сайте `2ip.ru` или командой `curl ifconfig.me`.
-5. Нажать **Save** и подождать несколько секунд, пока правило применится.
+1. Открыть **Postgres.app**.
+2. Нажать **Start**, если сервер ещё не запущен.
+3. Убедиться, что сервер слушает порт `5432`.
 
-Не следует добавлять `0.0.0.0/0`: это откроет базу всему интернету. После
-завершения работы правило лучше удалить.
+Проверка из терминала:
 
-### 21.3. Регистрация сервера в pgAdmin 4
+```bash
+psql -h localhost -p 5432 -U postgres -d wt_lab7 -c "SELECT version();"
+```
+
+При необходимости сервер можно запустить без графического интерфейса:
+
+```bash
+/Applications/Postgres.app/Contents/Versions/16/bin/pg_ctl \
+  -D "$HOME/Library/Application Support/Postgres/var-16" \
+  -l "$HOME/Library/Application Support/Postgres/var-16/server.log" start
+```
+
+### 21.3. Создание базы и применение миграций
+
+Если база `wt_lab7` ещё не создана:
+
+```bash
+createdb -h localhost -p 5432 -U postgres wt_lab7
+```
+
+Затем из каталога проекта применить миграции:
+
+```bash
+ASPNETCORE_ENVIRONMENT=Development dotnet ef database update
+```
+
+После этого в базе появятся таблицы `Properties` и `__EFMigrationsHistory`,
+а также пять начальных объектов недвижимости.
+
+### 21.4. Регистрация сервера в pgAdmin 4
 
 1. Открыть pgAdmin 4.
 2. В меню **Object** выбрать **Register** → **Server...**.
 3. На вкладке **General**:
-   - **Name:** `WT-7 Render PostgreSQL`.
+   - **Name:** `WT-7 Local PostgreSQL`.
 4. На вкладке **Connection**:
-   - **Host name/address:** `dpg-dbocn86c6qcc73d9mvgg-a.frankfurt-postgres.render.com`;
+   - **Host name/address:** `localhost`;
    - **Port:** `5432`;
-   - **Maintenance database:** `wt_lab7_d2i1`;
-   - **Username:** `wt_lab7_d2i1_user`;
-   - **Password:** пароль из **External Database URL**;
+   - **Maintenance database:** `wt_lab7`;
+   - **Username:** `postgres`;
+   - **Password:** пароль локального пользователя `postgres`;
    - при необходимости включить **Save password**.
 5. На вкладке **SSL**:
-   - **SSL mode:** `Require`.
+   - **SSL mode:** `Prefer`.
 6. Нажать **Save**.
 
 После подключения в дереве объектов появится:
 
 ```text
 Servers
-└── WT-7 Render PostgreSQL
+└── WT-7 Local PostgreSQL
     └── Databases
-        └── wt_lab7_d2i1
+        └── wt_lab7
             └── Schemas
                 └── public
                     └── Tables
@@ -851,9 +875,9 @@ Servers
                         └── __EFMigrationsHistory
 ```
 
-### 21.4. Проверка подключения
+### 21.5. Проверка подключения
 
-В pgAdmin 4 нужно открыть **Query Tool** для базы `wt_lab7_d2i1` и выполнить:
+В pgAdmin 4 нужно открыть **Query Tool** для базы `wt_lab7` и выполнить:
 
 ```sql
 SELECT "Id", "Address", "Type", "Price", "Rooms", "Floor"
@@ -868,21 +892,12 @@ ORDER BY 1;
 Первый запрос должен вернуть пять объектов недвижимости, второй — пять
 применённых миграций, включая `20261108192553_AddFloor`.
 
-### 21.5. Если подключение не устанавливается
+### 21.6. Если подключение не устанавливается
 
 | Симптом | Причина и решение |
 |---|---|
-| `timeout expired` | IP не добавлен в **PostgreSQL Inbound IP Rules** или изменился публичный IP |
-| `password authentication failed` | Неверный пароль; скопировать **External Database URL** заново или перевыпустить пароль в Render |
-| `SSL required` | В pgAdmin 4 не установлен **SSL mode = Require** |
-| `database does not exist` | В поле **Maintenance database** указано не `wt_lab7_d2i1` |
-| База недоступна после 08.12.2026 | Истёк срок бесплатной PostgreSQL на Render; базу нужно продлить или пересоздать |
-
-Для подключения из терминала без pgAdmin можно использовать `psql`:
-
-```bash
-psql "host=dpg-dbocn86c6qcc73d9mvgg-a.frankfurt-postgres.render.com \
-port=5432 dbname=wt_lab7_d2i1 user=wt_lab7_d2i1_user sslmode=require"
-```
-
-Пароль будет запрошен отдельно и не попадёт в историю команд.
+| `connection refused` | PostgreSQL не запущен; открыть Postgres.app и нажать **Start** |
+| `password authentication failed` | Неверный пароль пользователя `postgres` |
+| `database "wt_lab7" does not exist` | Создать базу командой `createdb` и применить миграции |
+| `role "postgres" does not exist` | В поле **Username** указан другой пользователь |
+| `port 5432 already in use` | Порт занят другим экземпляром PostgreSQL; остановить его или сменить порт |

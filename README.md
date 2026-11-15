@@ -8,7 +8,8 @@ ASP.NET Core Minimal API для учёта недвижимости. Данны�
 - **Публичный URL:** <https://wt-lab7-7postgres-efcore-kobzeva.onrender.com>
 - **GitHub:** <https://github.com/VictoriaKobzeva/wt-lab7-7postgres-efcore-kobzeva>
 - **Отчёт:** [REPORT.md](REPORT.md) · [PDF](wt-lab7-kobzeva.pdf) · [DOCX](wt-lab7-kobzeva.docx)
-- **Подключение к базе через pgAdmin 4:** раздел 21 в [REPORT.md](REPORT.md)
+- **Локальная БД:** PostgreSQL 16, `localhost:5432`, база `wt_lab7`, пользователь `postgres`
+- **Подключение локальной базы через pgAdmin 4:** раздел 21 в [REPORT.md](REPORT.md)
 
 ## Предметная область
 
