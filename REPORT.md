@@ -335,7 +335,7 @@ ORDER BY 1;
 SELECT * FROM "Properties";
 ```
 
-![Содержимое таблицы Properties на Render](docs/img/api-properties.png)
+![Ответ GET /api/properties: пять объектов из PostgreSQL](docs/img/api-properties.png)
 
 ---
 
@@ -510,7 +510,7 @@ var stats = await db.Properties
 ]
 ```
 
-![Статистика по типам недвижимости](docs/img/api-stats.png)
+![Ответ GET /api/properties/stats: статистика по типам](docs/img/api-stats.png)
 
 SQL, сформированный EF Core (виден в логах Render):
 
@@ -680,7 +680,7 @@ https://wt-lab7-7postgres-efcore-kobzeva.onrender.com
 | PUT | `/api/properties/6` | `200 OK` |
 | DELETE | `/api/properties/6` | `204 No Content` |
 
-![GET /api/properties](docs/img/api-properties.png)
+![Ответ GET /api/properties после публикации](docs/img/api-properties.png)
 
 ---
 
@@ -781,3 +781,108 @@ Dockerfile и выполнена публикация на Render. Провер�
 - **Публичный URL Render:** <https://wt-lab7-7postgres-efcore-kobzeva.onrender.com>
 - **Render PostgreSQL:** `wt-lab7-db-kobzeva`
 - **Render Web Service:** `wt-lab7-7postgres-efcore-kobzeva`
+
+---
+
+## 21. Приложение. Подключение базы Render к pgAdmin 4
+
+Для просмотра таблиц и выполнения SQL-запросов к опубликованной базе можно
+использовать pgAdmin 4. Приложение работает с PostgreSQL по обычному протоколу,
+поэтому подключается к Render так же, как к любому другому серверу PostgreSQL.
+
+### 21.1. Параметры подключения
+
+| Параметр | Значение |
+|---|---|
+| Host | `dpg-dbocn86c6qcc73d9mvgg-a.frankfurt-postgres.render.com` |
+| Port | `5432` |
+| Maintenance database | `wt_lab7_d2i1` |
+| Username | `wt_lab7_d2i1_user` |
+| Password | из Render → база → **Connect** → **External Database URL** |
+| SSL mode | `Require` |
+
+Пароль не хранится в Git-репозитории и не приводится в отчёте. Его нужно
+скопировать из Render в момент подключения.
+
+### 21.2. Разрешить внешний IP в Render
+
+По умолчанию Render закрывает внешние подключения к бесплатной PostgreSQL.
+В текущей настройке базы правило доступа пустое, поэтому прямое подключение
+из pgAdmin 4 без дополнительного шага завершится ошибкой тайм-аута.
+
+1. Открыть базу `wt-lab7-db-kobzeva` в Render Dashboard.
+2. Перейти в раздел **Networking** → **PostgreSQL Inbound IP Rules**.
+3. Нажать **Add source**.
+4. Указать свой публичный IP в формате CIDR, например `31.24.90.216/32`.
+   Узнать IP можно на сайте `2ip.ru` или командой `curl ifconfig.me`.
+5. Нажать **Save** и подождать несколько секунд, пока правило применится.
+
+Не следует добавлять `0.0.0.0/0`: это откроет базу всему интернету. После
+завершения работы правило лучше удалить.
+
+### 21.3. Регистрация сервера в pgAdmin 4
+
+1. Открыть pgAdmin 4.
+2. В меню **Object** выбрать **Register** → **Server...**.
+3. На вкладке **General**:
+   - **Name:** `WT-7 Render PostgreSQL`.
+4. На вкладке **Connection**:
+   - **Host name/address:** `dpg-dbocn86c6qcc73d9mvgg-a.frankfurt-postgres.render.com`;
+   - **Port:** `5432`;
+   - **Maintenance database:** `wt_lab7_d2i1`;
+   - **Username:** `wt_lab7_d2i1_user`;
+   - **Password:** пароль из **External Database URL**;
+   - при необходимости включить **Save password**.
+5. На вкладке **SSL**:
+   - **SSL mode:** `Require`.
+6. Нажать **Save**.
+
+После подключения в дереве объектов появится:
+
+```text
+Servers
+└── WT-7 Render PostgreSQL
+    └── Databases
+        └── wt_lab7_d2i1
+            └── Schemas
+                └── public
+                    └── Tables
+                        ├── Properties
+                        └── __EFMigrationsHistory
+```
+
+### 21.4. Проверка подключения
+
+В pgAdmin 4 нужно открыть **Query Tool** для базы `wt_lab7_d2i1` и выполнить:
+
+```sql
+SELECT "Id", "Address", "Type", "Price", "Rooms", "Floor"
+FROM "Properties"
+ORDER BY "Id";
+
+SELECT "MigrationId"
+FROM "__EFMigrationsHistory"
+ORDER BY 1;
+```
+
+Первый запрос должен вернуть пять объектов недвижимости, второй — пять
+применённых миграций, включая `20261108192553_AddFloor`.
+
+### 21.5. Если подключение не устанавливается
+
+| Симптом | Причина и решение |
+|---|---|
+| `timeout expired` | IP не добавлен в **PostgreSQL Inbound IP Rules** или изменился публичный IP |
+| `password authentication failed` | Неверный пароль; скопировать **External Database URL** заново или перевыпустить пароль в Render |
+| `SSL required` | В pgAdmin 4 не установлен **SSL mode = Require** |
+| `database does not exist` | В поле **Maintenance database** указано не `wt_lab7_d2i1` |
+| База недоступна после 08.12.2026 | Истёк срок бесплатной PostgreSQL на Render; базу нужно продлить или пересоздать |
+
+Для подключения из терминала без pgAdmin можно использовать `psql`:
+
+```bash
+psql "host=dpg-dbocn86c6qcc73d9mvgg-a.frankfurt-postgres.render.com \
+port=5432 dbname=wt_lab7_d2i1 user=wt_lab7_d2i1_user sslmode=require"
+```
+
+Пароль будет запрошен отдельно и не попадёт в историю команд.
