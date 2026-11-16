@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using wt_lab7_7postgres_efcore_kobzeva.Data;
 using wt_lab7_7postgres_efcore_kobzeva.Models;
 
@@ -30,7 +31,26 @@ if (!string.IsNullOrWhiteSpace(databaseUrl))
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(connectionString));
 
+// Swagger: OpenAPI-документ и интерактивная документация API.
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "WT Lab 7. Недвижимость",
+        Version = "v1",
+        Description = "ASP.NET Core Minimal API + Entity Framework Core + PostgreSQL"
+    });
+});
+
 var app = builder.Build();
+
+app.UseSwagger();
+app.UseSwaggerUI(options =>
+{
+    options.SwaggerEndpoint("/swagger/v1/swagger.json", "WT Lab 7 API v1");
+    options.RoutePrefix = "swagger";
+});
 
 // Автоматически применяем все существующие миграции при запуске.
 using (var scope = app.Services.CreateScope())
