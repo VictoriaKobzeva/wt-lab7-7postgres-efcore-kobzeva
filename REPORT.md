@@ -682,6 +682,50 @@ https://wt-lab7-7postgres-efcore-kobzeva.onrender.com
 
 ![Ответ GET /api/properties после публикации](docs/img/api-properties.png)
 
+### 16.1. Swagger UI
+
+В проект добавлен пакет `Swashbuckle.AspNetCore`, поэтому у API есть
+интерактивная документация OpenAPI. Она доступна по адресам:
+
+| Ресурс | URL |
+|---|---|
+| Swagger UI | `/swagger` |
+| OpenAPI-документ (JSON) | `/swagger/v1/swagger.json` |
+
+На публичном хостинге:
+
+```text
+https://wt-lab7-7postgres-efcore-kobzeva.onrender.com/swagger
+```
+
+В `Program.cs` для этого добавлены `AddEndpointsApiExplorer()`,
+`AddSwaggerGen()` и middleware `UseSwagger()` / `UseSwaggerUI()`:
+
+```csharp
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "WT Lab 7. Недвижимость",
+        Version = "v1",
+        Description = "ASP.NET Core Minimal API + Entity Framework Core + PostgreSQL"
+    });
+});
+
+app.UseSwagger();
+app.UseSwaggerUI(options =>
+{
+    options.SwaggerEndpoint("/swagger/v1/swagger.json", "WT Lab 7 API v1");
+    options.RoutePrefix = "swagger";
+});
+```
+
+Swagger UI показывает все девять маршрутов API и позволяет выполнять запросы
+прямо из браузера кнопкой **Try it out**.
+
+![Swagger UI с маршрутами API](docs/img/swagger-ui.png)
+
 ---
 
 ## 17. Повторная публикация и обновление структуры PostgreSQL
